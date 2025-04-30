@@ -1,0 +1,71 @@
+* {
+    font-family: "Fira Code Medium", monospace;
+    user-select: none;
+}
+nav li {
+    display: inline;
+}
+nav button {
+    background-color: #3F6A7C;
+    color: #FFFFFF;
+    cursor: pointer;
+    padding: 4px 8px;
+    border: #3F6A7C 2px solid;
+}
+nav button:hover {
+    background-color: #518094;
+}
+button {
+    cursor: pointer;
+}
+table {
+    border-collapse: collapse;
+}
+th {
+    width: fit-content;
+    padding: 0 10px;
+    cursor: default;
+}
+tbody tr:nth-child(odd) {
+    background-color: darkgray;
+    cursor: default;
+}
+tbody tr:hover {
+    background-color: #a5d6a7;
+    cursor: default;
+}
+tbody button, thead button {
+    background-color: transparent;
+    border: none;
+    padding: 5px;
+}
+td {
+    text-align: center;
+    vertical-align: middle;
+}
+td form button {
+    display: inline-flex;
+}
+fieldset {
+    border: 1px solid black;
+    padding: 10px;
+    width: fit-content;
+}
+.btn-cancel, .btn-save {
+    cursor: pointer;
+    font-weight: bold;
+    color: black;
+    border: 1px solid black;
+    padding: 4px 10px;
+    margin: 10px;
+}
+.btn-cancel {
+    background-color: lightcoral;
+}
+.btn-save {
+    background-color: #a5d6a7;
+}
+label, input[type=text]
+{
+    margin: 5px 0;
+}

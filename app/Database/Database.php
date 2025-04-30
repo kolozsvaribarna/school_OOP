@@ -10,14 +10,15 @@ class Database
     protected const DEFAULT_CONFIG = [
         'host' => 'localhost',
         'user' => 'root',
-        'password' => 'admin',
-        'database' => 'classroom',
+        'password' => '',
+        'database' => 'classroom'
     ];
 
     protected static ?Database $instance = null;
     private PDO $pdo;
 
-    private function __construct(array $config) {
+    private function __construct(array $config)
+    {
         $host = $config['host'] ?? self::DEFAULT_CONFIG['host'];
         $user = $config['user'] ?? self::DEFAULT_CONFIG['user'];
         $password = $config['password'] ?? self::DEFAULT_CONFIG['password'];
@@ -26,18 +27,17 @@ class Database
         try {
             $dsn = "mysql:host=$host;dbname=$database;charset=utf8mb4";
             $this->pdo = new PDO($dsn, $user, $password, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // Enable exception mode
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,       // Fetch as associative array
+                PDO::ATTR_EMULATE_PREPARES => false,                  // Use real prepared statements
             ]);
-        }
-        catch (PDOException $e) {
+        } catch (PDOException $e) {
             error_log($e->getMessage());
-            throw new \RunTimeException("Database connection error");
+            throw new \RuntimeException("Database connection error." . $e->getMessage());
         }
     }
 
-    public static function getInstance(array $config): Database
+    public static function getInstance(array $config = []): Database
     {
         if (self::$instance === null) {
             self::$instance = new self($config);
@@ -45,7 +45,7 @@ class Database
         return self::$instance;
     }
 
-    public function getPDO(): PDO
+    public function getPdo(): PDO
     {
         return $this->pdo;
     }
@@ -56,20 +56,20 @@ class Database
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
 
-            // INSERT -> id
-            if (str_starts_with(strtoupper(trim($sql)), "INSERT")) {
+            // Handle INSERT (return last insert ID)
+            if (str_starts_with(strtoupper(trim($sql)), 'INSERT')) {
                 return (int) $this->pdo->lastInsertId();
             }
 
-            // UPDATE
-            if (str_starts_with(strtoupper(trim($sql)), 'UPDATE')) {
+            // Handle SELECT (return results)
+            if (str_starts_with(strtoupper(trim($sql)), 'SELECT')) {
                 return $stmt->fetchAll() ?: [];
             }
 
-            // UPDATE / DELETE -> affected row count
+            // Handle UPDATE / DELETE
             return $stmt->rowCount() > 0;
-        }
-        catch (PDOException $e) {
+
+        } catch (PDOException $e) {
             $_SESSION['error_message'] = $e->getMessage();
             error_log($e->getMessage());
             return false;
@@ -86,7 +86,7 @@ class Database
         return $this->pdo->commit();
     }
 
-    public function rollBack(): bool
+    public function rollback(): bool
     {
         return $this->pdo->rollBack();
     }
